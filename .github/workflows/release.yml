@@ -11,8 +11,29 @@ permissions:
   contents: write
 
 jobs:
+  quality-check:
+    name: quality-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      
+      - name: Run clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+      
+      - name: Run tests
+        run: cargo test --all-features
+
   create-release:
     name: create-release
+    needs: ['quality-check']
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
