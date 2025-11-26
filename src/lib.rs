@@ -1546,9 +1546,24 @@ fn extract_snippet(sql: &str, span: Span) -> String {
     let mut res = String::new();
     let start_line = span.start.line.max(1) as usize;
     let end_line = span.end.line.max(1) as usize;
-    let start_col = span.start.column.max(1) as usize;
+    let mut start_col = span.start.column.max(1) as usize;
     let end_col = span.end.column.max(1) as usize;
     let lines: Vec<&str> = sql.lines().collect();
+
+    // Try to find the actual statement start by looking backwards for keywords
+    if let Some(line) = lines.get(start_line - 1) {
+        let before_span = &line[..(start_col - 1).min(line.len())];
+        // Look for common SQL statement keywords before the span
+        let keywords = ["CREATE", "INSERT", "WITH"];
+        for keyword in &keywords {
+            if let Some(pos) = before_span.rfind(keyword) {
+                // Found a keyword, adjust start_col to include it
+                start_col = pos + 1; // +1 because columns are 1-indexed
+                break;
+            }
+        }
+    }
+
     if start_line == end_line {
         if let Some(line) = lines.get(start_line - 1) {
             let s = line

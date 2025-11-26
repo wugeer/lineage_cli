@@ -75,12 +75,12 @@ db1.t <- db1.s
 $ lineage_cli --json --pretty test.sql
 [
   {
-    "stmt_index": 0,
+    "stmt_index": 1,
     "stmt_type": "CTAS",
     "start_line": 2,
     "start_col": 1,
     "end_line": 2,
-    "end_col": 54,
+    "end_col": 50,
     "target": "db1.t",
     "column": "id",
     "sources": ["db1.s.id"],
@@ -88,12 +88,12 @@ $ lineage_cli --json --pretty test.sql
     "statement": "CREATE TABLE t AS SELECT id, upper(name) AS uname FROM s"
   },
   {
-    "stmt_index": 0,
+    "stmt_index": 1,
     "stmt_type": "CTAS",
     "start_line": 2,
     "start_col": 1,
     "end_line": 2,
-    "end_col": 54,
+    "end_col": 50,
     "target": "db1.t",
     "column": "uname",
     "sources": ["db1.s.name"],
